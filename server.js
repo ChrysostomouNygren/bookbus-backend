@@ -1,12 +1,16 @@
 const express = require("express");
-const uuid = require("uuid");
+// const uuid = require("uuid");
 
 const port = 5000;
+// const db = require("./database");
+
+// Models:
+const books = require("./models/books.model");
+
 const app = express();
-const db = require("./database");
 
 // Såhär kommer books-objektet se ut inne i arrayen
-let books = [];
+// let books = [];
 /**
  * {
  * id: text,
@@ -19,92 +23,91 @@ let books = [];
 // Middlewares för parsing.
 app.use(express.json());
 
-const booksRouter = express.Router();
+// Routes
+// const booksRouter = express.Router();
+// Ngt vajsing med routes...
 
+// Fungerar
 // GET /books
-booksRouter.get("/books", (req, res) => {
-  const sql = "SELECT * FROM books";
-  const params = [];
+app.get("/books", async (req, res) => {
+  const result = await books.getAllBooks();
 
-  //   db.all(sql, params, (error, rows) => {
-  //     // vid ev fel:
-  //     if (error) {
-  //       console.error(error.message);
-  //       res.status(400).json({ error: error.message });
-  //     }
-  //     // vid lyckad nedhämtning skickas ett meddelande om detta, samt så skickas datan in i rows:
-  //     res.json({
-  //       message: "Lyckans dagar!",
-  //       data: rows,
-  //     });
-  //     // Här får jag bara in ovanstående, istället för boken jag skapat i database.js.... Why?
-  //   });
-  res.json(books);
+  res.json(result);
 });
 
+// Fungerar
 // GET /books/:id
-booksRouter.get("/books/:id", (req, res) => {
-  // Jämför böckernas idn i arrayen books med idt i urlen.
-  const foundBook = books.find((books) => books.id === req.params.id);
+app.get("/books/:id", async (req, res) => {
+  const wantedBook = req.params.id;
+  const foundBook = await books.getBook(wantedBook)
+
   res.json(foundBook);
 });
 
+// Fungerar
 // POST /books
-booksRouter.post("/books", (req, res) => {
-  books.push({
-    id: uuid.v4(),
-    title: req.body.title,
-    author: req.body.author,
-    genre: req.body.genre,
-  });
+app.post("/books", async (req, res) => {
+  const { title, author, genre } = req.body;
 
-  res.json(books);
+  if (!title || !author || !genre) {
+    return res.status(400).send("Något gick fel!");
+  }
+
+  const newBook = {
+    title,
+    author,
+    genre,
+  };
+
+  await books.addBook(newBook);
+
+  res.json(newBook);
 });
 
-// PUT /books/:id
-booksRouter.put("/books/:id", (req, res) => {
-  const foundBook = books.find((books) => books.id === req.params.id);
+// // PUT /books/:id
+// booksRouter.put("/books/:id", (req, res) => {
+//   const foundBook = books.find((books) => books.id === req.params.id);
 
-  // Med dessa if-satser så blir PUT likadan som PATCH.
-  if (req.body.title) {
-    foundBook.title = req.body.title;
-  }
-  if (req.body.author) {
-    foundBook.author = req.body.author;
-  }
-  if (req.body.genre) {
-    foundBook.genre = req.body.genre;
-  }
+//   // Med dessa if-satser så blir PUT likadan som PATCH.
+//   if (req.body.title) {
+//     foundBook.title = req.body.title;
+//   }
+//   if (req.body.author) {
+//     foundBook.author = req.body.author;
+//   }
+//   if (req.body.genre) {
+//     foundBook.genre = req.body.genre;
+//   }
 
-  res.json(books);
-});
+//   res.json(books);
+// });
 
-// PATCH /books/:id
-booksRouter.patch("/books/:id", (req, res) => {
-  // Hittat boken genom att jämföra idt i books-arrayen och i urlen.
-  const foundBook = books.find((books) => books.id === req.params.id);
+// // PATCH /books/:id
+// booksRouter.patch("/books/:id", (req, res) => {
+//   // Hittat boken genom att jämföra idt i books-arrayen och i urlen.
+//   const foundBook = books.find((books) => books.id === req.params.id);
 
-  if (req.body.title) {
-    foundBook.title = req.body.title;
-  }
-  if (req.body.author) {
-    foundBook.author = req.body.author;
-  }
-  if (req.body.genre) {
-    foundBook.genre = req.body.genre;
-  }
+//   if (req.body.title) {
+//     foundBook.title = req.body.title;
+//   }
+//   if (req.body.author) {
+//     foundBook.author = req.body.author;
+//   }
+//   if (req.body.genre) {
+//     foundBook.genre = req.body.genre;
+//   }
 
-  res.json(books);
-});
+//   res.json(books);
+// });
 
-// DELETE /books/:id
-booksRouter.delete("/books/:id", (req, res) => {
-  // Filtrerar bort boken som har det idt som stämmer överens med idt i urlen.
-  books = books.filter((books) => books.id !== req.params.id);
-  res.json(books);
-});
+// // DELETE /books/:id
+// booksRouter.delete("/books/:id", (req, res) => {
+//   // Filtrerar bort boken som har det idt som stämmer överens med idt i urlen.
+//   books = books.filter((books) => books.id !== req.params.id);
+//   res.json(books);
+// });
 
-app.use(booksRouter);
+// app.use(booksRouter);
 
 app.listen(port, () => {
   console.log(`Servern är igång i port ${port}.`);
