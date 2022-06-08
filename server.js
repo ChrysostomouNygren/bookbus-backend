@@ -1,31 +1,20 @@
-const express = require("express");
-// const uuid = require("uuid");
+// avinstallera uuid
+// lägga in i controllers
 
+
+
+const express = require("express");
 const port = 5000;
-// const db = require("./database");
 
 // Models:
 const books = require("./models/books.model");
 
 const app = express();
 
-// Såhär kommer books-objektet se ut inne i arrayen
-// let books = [];
-/**
- * {
- * id: text,
- * title: text,
- * author: text,
- * genre: text
- * }
- */
 
 // Middlewares för parsing.
 app.use(express.json());
 
-// Routes
-// const booksRouter = express.Router();
-// Ngt vajsing med routes...
 
 // Fungerar
 // GET /books
@@ -39,7 +28,7 @@ app.get("/books", async (req, res) => {
 // GET /books/:id
 app.get("/books/:id", async (req, res) => {
   const wantedBook = req.params.id;
-  const foundBook = await books.getBook(wantedBook)
+  const foundBook = await books.getBook(wantedBook);
 
   res.json(foundBook);
 });
@@ -64,50 +53,40 @@ app.post("/books", async (req, res) => {
   res.json(newBook);
 });
 
-// // PUT /books/:id
-// booksRouter.put("/books/:id", (req, res) => {
-//   const foundBook = books.find((books) => books.id === req.params.id);
+// Fungerar
+// PUT /books/:id
+app.put("/books/:id", async (req, res) => {
+  const { title, author, genre } = req.body;
+  const wantedBook = req.params.id;
+  const putBook = {
+    title,
+    author,
+    genre,
+  };
 
-//   // Med dessa if-satser så blir PUT likadan som PATCH.
-//   if (req.body.title) {
-//     foundBook.title = req.body.title;
-//   }
-//   if (req.body.author) {
-//     foundBook.author = req.body.author;
-//   }
-//   if (req.body.genre) {
-//     foundBook.genre = req.body.genre;
-//   }
+  await books.putBook(wantedBook, putBook);
+  res.json(putBook);
+});
 
-//   res.json(books);
-// });
+// Fungerar
+// PATCH /books/:id
+app.patch("/books/:id", async (req, res) => {
+  const { title } = req.body;
 
-// // PATCH /books/:id
-// booksRouter.patch("/books/:id", (req, res) => {
-//   // Hittat boken genom att jämföra idt i books-arrayen och i urlen.
-//   const foundBook = books.find((books) => books.id === req.params.id);
+  const wantedBook = req.params.id;
+  const patchBook = await books.patchBook(wantedBook, title);
 
-//   if (req.body.title) {
-//     foundBook.title = req.body.title;
-//   }
-//   if (req.body.author) {
-//     foundBook.author = req.body.author;
-//   }
-//   if (req.body.genre) {
-//     foundBook.genre = req.body.genre;
-//   }
+  res.json(patchBook);
+});
 
-//   res.json(books);
-// });
+// Fungerar
+// DELETE /books/:id
+app.delete("/books/:id", async (req, res) => {
+  const wantedBook = req.params.id;
+  const deletedBook = await books.deleteBook(wantedBook);
 
-// // DELETE /books/:id
-// booksRouter.delete("/books/:id", (req, res) => {
-//   // Filtrerar bort boken som har det idt som stämmer överens med idt i urlen.
-//   books = books.filter((books) => books.id !== req.params.id);
-//   res.json(books);
-// });
-
-// app.use(booksRouter);
+  res.json(deletedBook);
+});
 
 app.listen(port, () => {
   console.log(`Servern är igång i port ${port}.`);

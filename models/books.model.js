@@ -11,7 +11,7 @@ function getAllBooks() {
         reject(error);
       }
       resolve(rows);
-      console.log(rows)
+      console.log(rows);
     });
   });
 }
@@ -46,8 +46,58 @@ function addBook(book) {
   });
 }
 
+// PATCH /books/:id
+function patchBook(id, book) {
+  const sql = `UPDATE books SET title = '${book}' WHERE id = ${id}`;
+  return new Promise((resolve, reject) => {
+    db.run(sql, [book.title], (err) => {
+      if (err) {
+        console.error(err.message);
+        reject(err);
+      }
+      console.log(book.title);
+      resolve();
+    });
+  });
+}
+
+// PUT /books/:id
+function putBook(id, book) {
+  const sql = `UPDATE books SET title = '${book.title}', author = '${book.author}', genre = '${book.genre}' WHERE id = ${id}`;
+
+  return new Promise((resolve, reject) => {
+    db.run(sql, (err) => {
+      if (err) {
+        console.error(err.message);
+        reject(err);
+      }
+      resolve();
+    });
+  });
+}
+
+// DELETE /books/:id
+function deleteBook(id) {
+  const sql = "DELETE FROM books WHERE id = ?";
+  return new Promise((resolve, reject) => {
+    db.get(sql, id, (error) => {
+      // if ? !== id :?
+      if (error) {
+        console.error(error.message);
+        reject(error);
+      }
+      console.log("Boken borta! :(");
+      console.log(id);
+      resolve();
+    });
+  });
+}
+
 module.exports = {
   getAllBooks,
   getBook,
   addBook,
+  deleteBook,
+  patchBook,
+  putBook,
 };
