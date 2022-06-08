@@ -1,8 +1,7 @@
 {
   "dependencies": {
     "express": "^4.18.1",
-    "sqlite3": "^5.0.8",
-    "uuid": "^8.3.2"
+    "sqlite3": "^5.0.8"
   },
   "name": "kunskapskontroll-2",
   "version": "1.0.0",
