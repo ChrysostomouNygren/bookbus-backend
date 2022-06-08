@@ -1,3 +1,4 @@
+const res = require("express/lib/response");
 const db = require("../database");
 
 // GET /books
@@ -8,10 +9,11 @@ function getAllBooks() {
     db.all(sql, (error, rows) => {
       if (error) {
         console.error(error.message);
+        res.status(400)
         reject(error);
       }
+      res.status(200);
       resolve(rows);
-      console.log(rows);
     });
   });
 }
@@ -24,8 +26,10 @@ function getBook(id) {
     db.get(sql, id, (error, rows) => {
       if (error) {
         console.error(error.message);
+        res.status(400)
         reject(error);
       }
+      res.status(200)
       resolve(rows);
     });
   });
@@ -39,8 +43,10 @@ function addBook(book) {
     db.run(sql, [book.title, book.author, book.genre], (err) => {
       if (err) {
         console.error(err.message);
+        res.status(400)
         reject(err);
       }
+      res.status(201)
       resolve();
     });
   });
@@ -53,9 +59,10 @@ function patchBook(id, book) {
     db.run(sql, [book.title], (err) => {
       if (err) {
         console.error(err.message);
+        res.status(400)
         reject(err);
       }
-      console.log(book.title);
+      res.status(200)
       resolve();
     });
   });
@@ -69,8 +76,10 @@ function putBook(id, book) {
     db.run(sql, (err) => {
       if (err) {
         console.error(err.message);
+        res.status(400)
         reject(err);
       }
+      res.status(200)
       resolve();
     });
   });
@@ -84,10 +93,10 @@ function deleteBook(id) {
       // if ? !== id :?
       if (error) {
         console.error(error.message);
+        res.status(400)
         reject(error);
       }
-      console.log("Boken borta! :(");
-      console.log(id);
+      res.status(204)
       resolve();
     });
   });
