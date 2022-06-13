@@ -67,11 +67,13 @@ async function patchBook(req, res) {
 
 async function deleteBook(req, res) {
   const wantedBook = req.params.id;
+  const foundBook = await books.getBook(wantedBook);
   const deletedBook = await books.deleteBook(wantedBook);
-
-  if (!deletedBook) {
-    return res.status(400).send(`Book doesn't exist`);
-  }
+    if (foundBook) {
+      return res.status(200).send("Book deleted");
+    } else {
+      return res.status(400).send(`Book doesn't exist`);
+    }
   res.json(deletedBook);
 }
 
