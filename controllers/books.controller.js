@@ -11,6 +11,9 @@ async function getBook(req, res) {
   const wantedBook = req.params.id;
   const foundBook = await books.getBook(wantedBook);
 
+  if (!foundBook) {
+    return res.status(400).send(`Book doesn't exist`);
+  }
   res.json(foundBook);
 }
 
@@ -18,7 +21,7 @@ async function postBook(req, res) {
   const { title, author, genre } = req.body;
 
   if (!title || !author || !genre) {
-    return res.status(400).send("Något gick fel!");
+    return res.status(400).send("You need to send title, author and genre.");
   }
   const newBook = {
     title,
@@ -34,6 +37,11 @@ async function postBook(req, res) {
 async function putBook(req, res) {
   const { title, author, genre } = req.body;
   const wantedBook = req.params.id;
+
+  if (!title || !author || !genre) {
+    return res.status(400).send("You need to send title, author and genre.");
+  }
+
   const putBook = {
     title,
     author,
@@ -47,6 +55,10 @@ async function putBook(req, res) {
 async function patchBook(req, res) {
   const { title } = req.body;
 
+  if (!title) {
+    return res.status(400).send("You need to send a new title!");
+  }
+
   const wantedBook = req.params.id;
   const patchBook = await books.patchBook(wantedBook, title);
 
@@ -57,6 +69,9 @@ async function deleteBook(req, res) {
   const wantedBook = req.params.id;
   const deletedBook = await books.deleteBook(wantedBook);
 
+  if (!deletedBook) {
+    return res.status(400).send(`Book doesn't exist`);
+  }
   res.json(deletedBook);
 }
 

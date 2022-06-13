@@ -9,7 +9,7 @@ function getAllBooks() {
     db.all(sql, (error, rows) => {
       if (error) {
         console.error(error.message);
-        res.status(400)
+        res.status(400);
         reject(error);
       }
       res.status(200);
@@ -26,10 +26,10 @@ function getBook(id) {
     db.get(sql, id, (error, rows) => {
       if (error) {
         console.error(error.message);
-        res.status(400)
+        res.status(400);
         reject(error);
       }
-      res.status(200)
+      res.status(200);
       resolve(rows);
     });
   });
@@ -43,10 +43,10 @@ function addBook(book) {
     db.run(sql, [book.title, book.author, book.genre], (err) => {
       if (err) {
         console.error(err.message);
-        res.status(400)
+        res.status(400);
         reject(err);
       }
-      res.status(201)
+      res.status(201);
       resolve();
     });
   });
@@ -59,10 +59,10 @@ function patchBook(id, book) {
     db.run(sql, [book.title], (err) => {
       if (err) {
         console.error(err.message);
-        res.status(400)
+        res.status(400);
         reject(err);
       }
-      res.status(200)
+      res.status(200);
       resolve();
     });
   });
@@ -76,10 +76,10 @@ function putBook(id, book) {
     db.run(sql, (err) => {
       if (err) {
         console.error(err.message);
-        res.status(400)
+        res.status(400);
         reject(err);
       }
-      res.status(200)
+      res.status(200);
       resolve();
     });
   });
@@ -90,13 +90,12 @@ function deleteBook(id) {
   const sql = "DELETE FROM books WHERE id = ?";
   return new Promise((resolve, reject) => {
     db.get(sql, id, (error) => {
-      // if ? !== id :?
       if (error) {
         console.error(error.message);
-        res.status(400)
+        res.status(400);
         reject(error);
       }
-      res.status(204)
+      res.status(204);
       resolve();
     });
   });
